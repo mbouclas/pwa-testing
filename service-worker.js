@@ -21,10 +21,8 @@ const urlsToCache = [
 let ClientInstance;
 
 addEventListener('message', event => {
-
-    if (event.data && event.data.action && event.data.action === 'INITIALIZE') {return;}
-
     ClientInstance = event.source;
+    if (event.data && event.data.action && event.data.action === 'INITIALIZE') {return;}
 
     console.log(`The client sent me a message:`, event.data);// event is an ExtendableMessageEvent object
 
@@ -47,8 +45,12 @@ self.addEventListener('install', function(event) {
             {
                 console.log('Files cached')
 
-                setTimeout(() => ClientInstance.postMessage({action: 'install.complete'}), 2000)
-                // ClientInstance.postMessage("All Files Cached");
+                setTimeout(() => {
+                    console.log('The ClientInstance is', ClientInstance)
+                    if (!ClientInstance) {return;}
+                    ClientInstance.postMessage({action: 'install.complete'})
+                }, 2000)
+
             })
     );
 });
